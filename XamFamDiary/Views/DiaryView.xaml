@@ -1,0 +1,258 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage iOS:Page.UseSafeArea="False"
+             NavigationPage.HasBackButton="false"
+             x:Class="XamFamDiary.Views.DiaryView"
+             NavigationPage.HasNavigationBar="false"
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:renderers="clr-namespace:XamFamDiary.Renderers"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:XamFamDiary.Converters"
+             viewModelLocator:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:viewModelLocator="clr-namespace:XamFamDiary.ViewModels"
+             xmlns:sf="clr-namespace:Syncfusion.XForms.ComboBox;assembly=Syncfusion.SfComboBox.XForms"
+             xmlns:iOS="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ImageFileToImageSourceConverter x:Key="ImageFileToImageSourceConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid RowSpacing="0"
+          BackgroundColor="#f0f4f6"
+          VerticalOptions="FillAndExpand">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.15*" />
+            <RowDefinition Height="0.09*" />
+            <RowDefinition Height="0.11*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <!--Page header-->
+        <Frame Grid.Row="0"
+               HasShadow="True"
+               BackgroundColor="Black">
+            <Label FontSize="30"
+                   Text="x   New Diary"
+                   Margin="10,20,0,0"
+                   TextColor="White"
+                   FontAttributes="Bold"
+                   CharacterSpacing="1.1"
+                   VerticalTextAlignment="Center"
+                   HorizontalTextAlignment="Start"
+                   VerticalOptions="CenterAndExpand" />
+        </Frame>
+        <!--Location Header-->
+        <StackLayout Grid.Row="1"
+                     Padding="20,0,0,0"
+                     Orientation="Horizontal"
+                     BackgroundColor="White"
+                     VerticalOptions="FillAndExpand">
+            <Image Source="Map"
+                   WidthRequest="30"
+                   HeightRequest="30"
+                   Aspect="AspectFill"
+                   VerticalOptions="CenterAndExpand"/>
+            <Label TextColor="#8d8d8d"
+                   Text="{Binding Location}"
+                   VerticalTextAlignment="Center"/>
+        </StackLayout>
+        <!--Add site header-->
+        <StackLayout Grid.Row="2"
+                     Margin="26,20,26,0"
+                     Orientation="Horizontal"
+                     VerticalOptions="Start">
+            <Label FontSize="22"
+                   TextColor="#8d8d8d"
+                   FontAttributes="Bold"
+                   Text="Add to site diary" />
+            <Image Source="question"
+                   WidthRequest="30"
+                   HeightRequest="30"
+                   Aspect="AspectFit"
+                   VerticalOptions="Start"
+                   HorizontalOptions="EndAndExpand"/>
+        </StackLayout>
+        <!--Add photo content-->
+        <ScrollView Grid.Row="3"
+                    VerticalOptions="StartAndExpand">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <!--Add Photos-->
+                <Frame Grid.Row="0"
+                       Margin="24,7,24,24"
+                       BackgroundColor="White">
+                    <StackLayout>
+                        <Label FontAttributes="Bold"
+                               TextColor="#797979"
+                               Text="Add Photos to site diary" />
+                        <BoxView HeightRequest="1"
+                                 BackgroundColor="#e4e2e2"
+                                 HorizontalOptions="FillAndExpand" />
+                        <CollectionView HeightRequest="50"
+                                        ItemsLayout="HorizontalList"
+                                        ItemsSource="{Binding Photos}"
+                                        HorizontalScrollBarVisibility="Never">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Image Margin="5"
+                                               Grid.Row="0"
+                                               WidthRequest="40"
+                                               HeightRequest="40"
+                                               Aspect="AspectFill"
+                                               Source="{Binding ., Converter={StaticResource ImageFileToImageSourceConverter}}"/>
+                                        <Image Grid.Row="0"
+                                               Source="close"
+                                               VerticalOptions="StartAndExpand"
+                                               HorizontalOptions="EndAndExpand">
+                                            <Image.GestureRecognizers>
+                                                <TapGestureRecognizer CommandParameter="{Binding .}"
+                                                                       Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RemovePhotoCommand}" />
+                                            </Image.GestureRecognizers>
+                                        </Image>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        <Button FontSize="16"
+                                Margin="0,20,0,0"
+                                Text="Add a photo"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                BackgroundColor="#97d601"
+                                Command="{Binding AddPhotoCommand}"/>
+                        <StackLayout Orientation="Horizontal">
+                            <Label TextColor="#c1c1c1"
+                                   VerticalTextAlignment="Center"
+                                   Text="Include in photo gallery" />
+                            <CheckBox Color="#97d601"
+                                      IsChecked="{Binding UserDiary.IncludePhoto}"
+                                      VerticalOptions="Start"
+                                      HorizontalOptions="EndAndExpand"/>
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
+                <!--Add Comments-->
+                <Frame Grid.Row="1"
+                       Margin="24,7,24,7"
+                       BackgroundColor="White">
+                    <StackLayout VerticalOptions="Start">
+                        <Label Text="Comments"
+                               TextColor="#797979"
+                               FontAttributes="Bold"/>
+                        <BoxView HeightRequest="1"
+                                 BackgroundColor="#e4e2e2"
+                                 HorizontalOptions="FillAndExpand" />
+                        <renderers:EntryNoBorder Placeholder="Comments"
+                                                 Text="{Binding UserDiary.Comments}"/>
+                    </StackLayout>
+                </Frame>
+                <!--Add Details-->
+                <Frame Grid.Row="2"
+                       Margin="24,7,24,7"
+                       BackgroundColor="White">
+                    <StackLayout VerticalOptions="Start">
+                        <Label Text="Details"
+                               TextColor="#797979"
+                               FontAttributes="Bold" />
+                        <BoxView HeightRequest="1"
+                                 BackgroundColor="#e4e2e2"
+                                 HorizontalOptions="FillAndExpand" />
+                        <!--Dates-->
+                        <sf:SfComboBox TextSize="16"
+                                       Margin="0,5,0,5"
+                                       Text="{Binding UserDiary.Date}"
+                                       TextColor="#979797"
+                                       IsEditableMode="False"
+                                       BorderColor="Transparent"
+                                       VerticalOptions="StartAndExpand"
+                                       ComboBoxSource="{Binding Dates}"
+                                       HorizontalOptions="FillAndExpand"/>
+                        <BoxView HeightRequest="1"
+                                 BackgroundColor="#e4e2e2"
+                                 HorizontalOptions="FillAndExpand" />
+                        <!--Areas-->
+                        <sf:SfComboBox TextSize="16"
+                                       Margin="0,5,0,5"
+                                       Text="{Binding UserDiary.Area}"
+                                       TextColor="#979797"
+                                       IsEditableMode="False"
+                                       BorderColor="Transparent"
+                                       VerticalOptions="StartAndExpand"
+                                       ComboBoxSource="{Binding Areas}"
+                                       HorizontalOptions="FillAndExpand"/>
+                        <BoxView HeightRequest="1"
+                                 BackgroundColor="#e4e2e2"
+                                 HorizontalOptions="FillAndExpand" />
+                        <!--Categories-->
+                        <sf:SfComboBox TextSize="16"
+                                       Margin="0,5,0,5"
+                                       TextColor="#979797"
+                                       IsEditableMode="False"
+                                       Text="{Binding UserDiary.Category}"
+                                       BorderColor="Transparent"
+                                       VerticalOptions="StartAndExpand"
+                                       HorizontalOptions="FillAndExpand"
+                                       ComboBoxSource="{Binding Categories}" />
+                        <BoxView HeightRequest="1"
+                                 BackgroundColor="#e4e2e2"
+                                 HorizontalOptions="FillAndExpand" />
+                        <!--Add Tags-->
+                        <renderers:EntryNoBorder Placeholder="Tags"
+                                                 Text="{Binding UserDiary.Tag}"/>
+                        <BoxView HeightRequest="1"
+                                 BackgroundColor="#e4e2e2"
+                                 HorizontalOptions="FillAndExpand" />
+                    </StackLayout>
+                </Frame>
+                <!--Link Events-->
+                <Frame Grid.Row="3"
+                       Margin="24,7,24,0"
+                       VerticalOptions="Start"
+                       BackgroundColor="White">
+                    <StackLayout>
+                        <!--Tried not to use nested stack
+                        but the children didn't behave-->
+                        <StackLayout Orientation="Horizontal">
+                            <Label TextColor="#363636"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center"
+                                   Text="Link to existing event?" />
+                            <CheckBox IsChecked="{Binding UserDiary.LinkEvent}"
+                                      Color="#97d601"
+                                      VerticalOptions="CenterAndExpand"
+                                      HorizontalOptions="EndAndExpand" />
+                        </StackLayout>
+                        <BoxView HeightRequest="1"
+                                 BackgroundColor="#e4e2e2"
+                                 HorizontalOptions="FillAndExpand" />
+                        <!--Categories-->
+                        <sf:SfComboBox TextSize="16"
+                                       Margin="0,5,0,5"
+                                       TextColor="#979797"
+                                       IsEditableMode="False"
+                                       Text="{Binding UserDiary.Event}"
+                                       BorderColor="Transparent"
+                                       VerticalOptions="StartAndExpand"
+                                       ComboBoxSource="{Binding Events}"
+                                       HorizontalOptions="FillAndExpand"/>
+                    </StackLayout>
+                </Frame>
+                 <!--Send-->
+                <Button Text="Next"
+                        Grid.Row="4"
+                        FontSize="16"
+                        Margin="24,10,24,0"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        BackgroundColor="#97d601"
+                        VerticalOptions="StartAndExpand"
+                        Command="{Binding SendDairyCommand}"/>
+            </Grid>
+        </ScrollView>
+    </Grid>
+</ContentPage>
